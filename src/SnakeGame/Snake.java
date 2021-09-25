@@ -16,8 +16,7 @@ public class Snake{
         headNode = parentNode;
         gameSession.setBlock(0, 0, true);
         for(int i=1;i<length;i++){
-            Node childNode = new Node();
-            parentNode.setChildNode(childNode);
+            Node childNode = parentNode.createChild();
             parentNode = childNode;
         }
 
@@ -26,25 +25,25 @@ public class Snake{
 
     public void feed(){
         this.length++;
-        Node childNode = new Node();
-        tailNode.setChildNode(childNode);
-        tailNode = childNode; 
+        tailNode = tailNode.createChild();; 
     }
 
     public void displayInfo(){
         Node currentNode = headNode;
+        System.out.println("-----HEAD-----");
         currentNode.displayInfo();
         do{
             currentNode = currentNode.getChildNode();
             currentNode.displayInfo();
         } while(!currentNode.equals(tailNode));
+        System.out.println("-----TAIL-----");
     }
 
     public void run(){
         while(true){
             headNode.setLocationHead(gameSession.getDirection());
             try{
-                Thread.sleep(40);
+                Thread.sleep(100);
             }catch (Exception e){}
         }
 
@@ -62,9 +61,16 @@ public class Snake{
             
         }
 
-        public void setChildNode(Node childNode){
+        public Node(int x, int y){
+            this.x = x;
+            this.y = y;
+            childNode = null;
+        }
+
+        public Node createChild(){
+            Node childNode = new Node(this.x, this.y);
             this.childNode = childNode; 
-            this.childNode.setLocation(this.x, this.y);
+            return childNode;
         }
 
         public Node getChildNode(){
@@ -92,7 +98,6 @@ public class Snake{
             int previousY = this.y;
             this.x = x;
             this.y = y;
-            //MapManager.setBlock(this.x, this.y, true);
             if(childNode != null){
                 this.childNode.setLocation(previousX, previousY);
             }else{

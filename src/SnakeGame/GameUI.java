@@ -90,7 +90,6 @@ public class GameUI {
             Iterator<PixelBlock> it = gameSession.getPixelBlockIterator();
     
             while(it.hasNext()){
-                System.out.println();
     
                 PixelBlock b = it.next();
                 int x = b.getX();

@@ -2,6 +2,8 @@ package SnakeGame;
 
 import java.util.*;
 
+// appeared on the mid body of snake
+
 public class GameSession {
     private HashSet<PixelBlock> pixelBlockList;
     private PixelBlock[][] mapGrid;
@@ -15,8 +17,8 @@ public class GameSession {
 
     // UI
     private GameUI gameUI;
-    protected final static int MAP_SIZE_X = 800;
-    protected final static int MAP_SIZE_Y = 800;
+    protected final static int MAP_SIZE_X = 200;
+    protected final static int MAP_SIZE_Y = 200;
     
     public static void main(String[] args){
         GameSession gameSession = new GameSession();
@@ -63,14 +65,29 @@ public class GameSession {
     }
 
     public void setBlock(int x, int y, boolean isSet){
+        // boundary 0 < x < MAP_SIZE_X
+        // boundary 0 < y < MAP_SIZE_Y
+        if(x >= (MAP_SIZE_X/20) || x < 0 || y >= (MAP_SIZE_Y/20) || y < 0){
+            System.out.println("Game OVER");
+            while(true);
+        }
+
         if(isSet){
             // check if food is in this pixel block
-            if(mapGrid[x][y] != null && mapGrid[x][y].getIsFood()){
-                snake.feed();
-                mapGrid[x][y].setBlock();
-                generateFood();
-                score += 50;
-                gameUI.updateScore("" + score);
+            if(mapGrid[x][y] != null){
+                // if food then feed 
+                // if snake body then game over
+                if(mapGrid[x][y].getIsFood()){
+                    snake.feed();
+                    mapGrid[x][y].setBlock();
+                    generateFood();
+                    score += 50;
+                    gameUI.updateScore("" + score);
+                }else{
+                    System.out.println("GAME OVER");
+                    while(true);
+                }
+
             }else{
                 PixelBlock b = new PixelBlock(x, y, false);
                 mapGrid[x][y] = b;
@@ -101,18 +118,25 @@ public class GameSession {
         int y = 0;
         if(isSessionStarted){
             do{
-                x = foodGenerator.nextInt(40);
-                y = foodGenerator.nextInt(40);
+                x = foodGenerator.nextInt(MAP_SIZE_X / 20);
+                y = foodGenerator.nextInt(MAP_SIZE_Y / 20);
+                //System.out.println("Created food");
+                //if(x % 2 == 0){
+                //    x = 0;
+                //    y = 0;
+                //}
             }while(mapGrid[x][y] != null);
         }else{
-            x = 5 + foodGenerator.nextInt(35);
-            y = 5 + foodGenerator.nextInt(35);
+            x = 5 + foodGenerator.nextInt(MAP_SIZE_X / 100);
+            y = 5 + foodGenerator.nextInt(MAP_SIZE_Y / 100);
+            isSessionStarted = true;
+            //System.out.println("Created food");
         }
+
 
         PixelBlock b = new PixelBlock(x, y, true);
         mapGrid[x][y] = b;
         pixelBlockList.add(b);
-
     }
 
     protected class PixelBlock{
